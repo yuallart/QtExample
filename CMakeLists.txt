@@ -12,16 +12,20 @@
 cmake_minimum_required(VERSION 3.23)
 project(QtExample)
 
+file(GLOB_RECURSE QRC_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.qrc)
 # 指定c++的版本
 set(CMAKE_CXX_STANDARD 11)
 # 自动使用下面的工具
 set(CMAKE_AUTOMOC ON)
+# 自动解析静态资源文件
 set(CMAKE_AUTORCC ON)
+# 自动解析.ui文件为C++文件
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_FLAGS "-mwindows")
 # 指定qt的环境目录
 set(CMAKE_PREFIX_PATH "C:/IDE/compiler/QT/5.9.6/mingw53_32")
-# 查找以下模块
+
+# 必须要查找到了相应的模块，才能使用下面的函数
 find_package(
         Qt5
         REQUIRED
@@ -30,10 +34,16 @@ find_package(
         Gui
         Widgets
 )
+set(QRC_SOURCE_FILES imageResource.qrc)
+
+qt5_add_resources(QRC_FILES ${QRC_SOURCE_FILES})
+
+SOURCE_GROUP("Resource Files" FILES ${QRC_SOURCE_FILES})
 # 添加指定的源文件
 add_executable(
         ${PROJECT_NAME}
         main.cpp
+        ${QRC_FILES}
         mainwindow.cpp
         mainwindow.h
 )
@@ -46,6 +56,7 @@ target_link_libraries(
 )
 #指定qt5使用的模块
 qt5_use_modules(${PROJECT_NAME} Core Widgets Gui)
+
 
 if (WIN32)
     set(DEBUG_SUFFIX)
